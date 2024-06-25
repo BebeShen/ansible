@@ -1,0 +1,18 @@
+- name: Ping to all switches
+  hosts: p4testbed
+  tasks:
+    - name: test connection
+      ping:
+      register: conn
+
+    # - name: print debug message
+    #   debug:
+    #     msg: "{{ conn }}"
+    
+    - name: curl to bmc
+      ansible.builtin.command: "curl http://[fe80::ff:fe00:1%usb0]:8080/api/sys/bmc"
+      register: curl_msg
+
+    - name: print curl message
+      debug:
+        msg: "{{ curl_msg }}"

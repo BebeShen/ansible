@@ -1,0 +1,51 @@
+- name: Move code to DUT
+  hosts: test_uni_device
+  tasks: 
+    - name: Check if dir & code exist
+      ansible.builtin.stat:
+        path: ~/p4code
+      register: p4dir_stat
+
+    - name: Debug dir status
+      debug:
+        msg: "Directory exists: {{ p4dir_stat.stat.exists }}"
+
+    - name: Create dir if not exists
+      ansible.builtin.file:
+        path: ~/p4code
+        state: directory
+      when: not p4dir_stat.stat.exists
+      
+    - name: Display message if exists
+      ansible.builtin.debug:
+        msg: "The dir already exists"
+      when: p4dir_stat.stat.exists
+    
+    - name: Copy code
+      ansible.builtin.copy:
+        src: /home/bebe/Desktop/Projects/p4s/{{ code_dir }}/
+        dest: ~/p4code/{{ code_dir }}/
+
+    - name: Check tools dir exists
+      ansible.builtin.stat:
+        path: ~/tools
+      register: tools_stat
+
+    - name: Copy tools dir if not exist
+      ansible.builtin.copy:
+        src: /home/bebe/Desktop/imslab/tools/
+        dest: ~/tools/
+      when: not tools_stat.stat.exists
+
+    - name: chmod script
+      ansible.builtin.file:
+        path: ~/tools/p4_build.sh
+        mode: '0755'
+      when: not tools_stat.stat.exists
+
+- name: Build code
+  hosts: test_uni_device
+  tasks:
+    - name: Build code by tools/p4_build.sh
+      ansible.builtin.shell: ~/tools/p4_build.sh ~/p4code/{{ code_dir }}/p4src/{{ code_dir }}.p4
+        
