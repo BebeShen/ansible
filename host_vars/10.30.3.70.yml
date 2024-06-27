@@ -1,0 +1,27 @@
+ports : [
+  {
+    port: "19/-",
+    dp: "20",
+    speed: "100G"
+  },
+  {
+    port: "23/-",
+    dp: "52",
+    speed: "100G"
+  },
+  {
+    port: "32/-",
+    dp: "136",
+    speed: "100G"
+  },
+]
+forwarding_rules : [
+  {
+    ip: "10.0.0.2",
+    out_port: "136"
+  },
+  {
+    ip: "10.0.0.187",
+    out_port: "20"
+  },
+]

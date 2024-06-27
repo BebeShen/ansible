@@ -1,30 +1,26 @@
 - name: Move code to DUT
-  hosts: test_uni_device
+  hosts: path2
   tasks: 
     - name: Check if dir & code exist
       ansible.builtin.stat:
         path: ~/p4code
       register: p4dir_stat
 
-    - name: Debug dir status
-      debug:
-        msg: "Directory exists: {{ p4dir_stat.stat.exists }}"
-
     - name: Create dir if not exists
       ansible.builtin.file:
         path: ~/p4code
         state: directory
       when: not p4dir_stat.stat.exists
-      
-    - name: Display message if exists
-      ansible.builtin.debug:
-        msg: "The dir already exists"
-      when: p4dir_stat.stat.exists
+
+    - name: Check if program exist
+      ansible.builtin.stat:
+        path: ~/p4code/{{ program }}
+      register: program_stat
     
-    - name: Copy code
+    - name: Copy code if not exist
       ansible.builtin.copy:
-        src: /home/bebe/Desktop/Projects/p4s/{{ code_dir }}/
-        dest: ~/p4code/{{ code_dir }}/
+        src: /home/bebe/Desktop/Projects/p4s/{{ program }}/
+        dest: ~/p4code/{{ program }}/
 
     - name: Check tools dir exists
       ansible.builtin.stat:
@@ -44,8 +40,18 @@
       when: not tools_stat.stat.exists
 
 - name: Build code
-  hosts: test_uni_device
+  hosts: path2
   tasks:
+    - name: Check program is Build or not
+      ansible.builtin.stat:
+        path: "{{ env_sde }}/build/p4-build/tofino/{{ program }}"
+      register: build_stat
+
+    - name: Display build_stat
+      ansible.builtin.debug:
+        msg: "{{ build_stat }}"
+
     - name: Build code by tools/p4_build.sh
-      ansible.builtin.shell: ~/tools/p4_build.sh ~/p4code/{{ code_dir }}/p4src/{{ code_dir }}.p4
+      ansible.builtin.shell: 'bash -c "sudo -E ~/tools/p4_build.sh ~/p4code/{{ program }}/p4src/{{ program }}.p4"'
+      when: not build_stat.stat.exists
         

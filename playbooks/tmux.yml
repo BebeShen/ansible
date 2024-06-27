@@ -1,6 +1,12 @@
 - name: operate tmux
-  hosts: path1
+  hosts: path2
   tasks:
+    - name: Link kernel header
+      ansible.builtin.command: tmux send-keys -t p4 'ln -s /usr/share/onl/packages/amd64/onl-kernel-4.14-lts-x86-64-all/mbuilds/ /lib/modules/4.14.151-OpenNetworkLinux/build' C-m
+
+    - name: Load driver
+      ansible.builtin.command: tmux send-keys -t p4 'bf_kdrv_mod_load $SDE_INSTALL' C-m
+      
     - name: check tmux session
       ansible.builtin.command: "tmux has-session -t p4"
       register: tmux_session_check
@@ -15,44 +21,5 @@
       ansible.builtin.command: tmux new-session -d -s p4
       when: tmux_session_check.rc != 0
 
-    - name: Link kernel header
-      ansible.builtin.command: tmux send-keys -t p4 'ln -s /usr/share/onl/packages/amd64/onl-kernel-4.14-lts-x86-64-all/mbuilds/ /lib/modules/4.14.151-OpenNetworkLinux/build' C-m
-
-    - name: Load driver
-      ansible.builtin.command: tmux send-keys -t p4 'bf_kdrv_mod_load $SDE_INSTALL' C-m
-
     - name: Clear session pane
       ansible.builtin.command: tmux send-keys -t p4 'clear' C-m
-
-    - name: run switchd 
-      ansible.builtin.command: tmux send-keys -t p4 '$SDE/run_switchd.sh -p lab1_port' C-m
-
-    - name: Wait for a moment to ensure bf_shell UP
-      pause:
-        seconds: 15
-    
-    - name: operate SDE through tmux
-      block: 
-      - name: ucli
-        ansible.builtin.command: tmux send-keys -t p4 'ucli' C-m
-
-      - name: Show qsfp
-        ansible.builtin.command: tmux send-keys -t p4 'qsfp show' C-m
-
-      - name: Capture output from tmux session 'p4'
-        ansible.builtin.command: tmux capture-pane -pt p4
-        register: tmux_capture_output
-        when: tmux_session_check.rc == 0
-
-      - name: Display output from tmux session 'p4'
-        debug:
-          msg: "{{ tmux_capture_output }}"
-        when: tmux_session_check.rc == 0
-
-      always:
-      - name: Quit switchd
-        ansible.builtin.command: tmux send-keys -t p4 C-\\ C-m
-
-    - name: Clear session pane
-      ansible.builtin.command: tmux send-keys -t p4 'clear' C-m
-      when: tmux_session_check.rc == 0

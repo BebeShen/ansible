@@ -1,0 +1,120 @@
+- name: operate tmux
+  hosts: "{{ path }}"
+  tasks:
+    - name: check tmux session
+      ansible.builtin.command: "tmux has-session -t p4"
+      register: tmux_session_check
+      ignore_errors: yes
+
+    - name: tmux failed
+      debug:
+        msg: "No tmux session running"
+      when: tmux_session_check.rc != 0
+
+    - name: Create tmux session 'p4' if it does not exist
+      ansible.builtin.command: tmux new-session -d -s p4
+      when: tmux_session_check.rc != 0
+
+    - name: Clear session pane
+      ansible.builtin.command: tmux send-keys -t p4 'clear' C-m
+
+    - name: run switchd 
+      ansible.builtin.command: tmux send-keys -t p4 'sudo -E $SDE/run_switchd.sh -p {{ program }}' C-m
+
+    - name: Wait for a moment to ensure bf_shell UP
+      pause:
+        seconds: 15
+    
+    - name: operate SDE through tmux
+      block: 
+      - name: Enter ucli
+        ansible.builtin.command: tmux send-keys -t p4 'ucli' C-m
+
+      - name: Show qsfp
+        ansible.builtin.command: tmux send-keys -t p4 'qsfp show' C-m
+
+      - name: Capture output from tmux session 'p4'
+        ansible.builtin.command: tmux capture-pane -pt p4
+        register: tmux_capture_output
+        when: tmux_session_check.rc == 0
+
+      - name: Display output from tmux session 'p4'
+        debug:
+          msg: "{{ tmux_capture_output }}"
+        when: tmux_session_check.rc == 0
+      
+      # Enter pm to enable ports
+      - name: Port-Manager
+        block:
+        - name: Enter port manager
+          ansible.builtin.command: tmux send-keys -t p4 'pm' C-m
+            
+        - name: Add port
+          ansible.builtin.command: tmux send-keys -t p4 "port-add {{ item['port'] }} {{ item['speed'] }} NONE" C-m
+          with_items: " {{ ports }} "
+
+        - name: Auto-Negotiation force disable
+          ansible.builtin.command: tmux send-keys -t p4 "an-set {{ item['port'] }} 2" C-m
+          with_items: " {{ ports }} "            
+
+        - name: Enable port
+          ansible.builtin.command: tmux send-keys -t p4 "port-enb {{ item['port'] }}" C-m
+          with_items: " {{ ports }} "
+            
+        - name: Wait for 3 seconds
+          pause:
+            seconds: 5
+
+        - name: Show port status
+          ansible.builtin.command: tmux send-keys -t p4 'show' C-m
+      
+        - name: Capture port output from tmux session 'p4'
+          ansible.builtin.command: tmux capture-pane -pt p4
+          register: tmux_capture_output
+
+        - name: Display port output from tmux session 'p4'
+          debug:
+            msg: "{{ tmux_capture_output }}"
+
+      # Enter BFRT to insert rule
+      - name: BFRuntime (BFRT)
+        block: 
+        - name: Exit ucli
+          ansible.builtin.command: tmux send-keys -t p4 'exit' C-m
+
+        - name: Enter bfrt_python
+          ansible.builtin.command: tmux send-keys -t p4 'bfrt_python' C-m
+
+        - name: Enter bfrt CLI
+          ansible.builtin.command: tmux send-keys -t p4 'bfrt' C-m
+
+        - name: Enter table
+          ansible.builtin.command: tmux send-keys -t p4 "{{ program }}.pipe.Ingress.ipv4_host" C-m
+
+        - name: Insert table entries
+          ansible.builtin.command: tmux send-keys -t p4 "add_with_send(\"{{ item['ip'] }}\", {{ item['out_port'] }})" C-m
+          with_items: "{{ forwarding_rules }}"
+
+        - name: Dump table entries
+          ansible.builtin.command: tmux send-keys -t p4 "dump(table=True)" C-m
+          register: table_output
+
+        - name: Capture table output from tmux session 'p4'
+          ansible.builtin.command: tmux capture-pane -pt p4
+          register: table_output
+
+        - name: Display table output from tmux session 'p4'
+          debug:
+            msg: "{{ table_output }}"
+
+      always:
+      - name: Wait 30s for testing ping
+        ansible.builtin.pause: 
+          seconds: 30
+
+      - name: Quit switchd
+        ansible.builtin.command: tmux send-keys -t p4 C-\\ C-m
+
+    - name: Clear session pane
+      ansible.builtin.command: tmux send-keys -t p4 'clear' C-m
+      when: tmux_session_check.rc == 0
