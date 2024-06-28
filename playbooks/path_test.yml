@@ -108,9 +108,9 @@
             msg: "{{ table_output }}"
 
       always:
-      - name: Wait 30s for testing ping
+      - name: Wait 60s for testing ping
         ansible.builtin.pause: 
-          seconds: 30
+          seconds: 60
 
       - name: Quit switchd
         ansible.builtin.command: tmux send-keys -t p4 C-\\ C-m

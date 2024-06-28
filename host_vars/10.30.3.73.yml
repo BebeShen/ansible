@@ -1,7 +1,9 @@
+# 128,129 : Broadcom Gigabit Ethernet BCM5720 
+# 130,131 : Intel(R) Ethernet 25G 2P E810-XXV OCP
 ports : [
   {
     port: "1/-",
-    dp: "128",
+    dp: "130",
     speed: "10G"
   },
   {
