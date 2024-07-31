@@ -1,5 +1,5 @@
 - name: Ping to all switches
-  hosts: p4testbed
+  hosts: "{{ path }}"
   tasks:
     - name: test connection
       ping:
