@@ -1,5 +1,5 @@
 - name: Move code to DUT
-  hosts: path2
+  hosts: uni_device
   tasks: 
     - name: Check if dir & code exist
       ansible.builtin.stat:
@@ -12,12 +12,7 @@
         state: directory
       when: not p4dir_stat.stat.exists
 
-    - name: Check if program exist
-      ansible.builtin.stat:
-        path: ~/p4code/{{ program }}
-      register: program_stat
-    
-    - name: Copy code if not exist
+    - name: Copy code
       ansible.builtin.copy:
         src: /home/bebe/Desktop/Projects/p4s/{{ program }}/
         dest: ~/p4code/{{ program }}/
@@ -40,11 +35,11 @@
       when: not tools_stat.stat.exists
 
 - name: Build code
-  hosts: path2
+  hosts: uni_device
   tasks:
     - name: Check program is Build or not
       ansible.builtin.stat:
-        path: "{{ env_sde }}/build/p4-build/tofino/{{ program }}"
+        path: "$SDE/build/p4-build/tofino/{{ program }}"
       register: build_stat
 
     - name: Display build_stat
@@ -53,5 +48,5 @@
 
     - name: Build code by tools/p4_build.sh
       ansible.builtin.shell: 'bash -c "sudo -E ~/tools/p4_build.sh ~/p4code/{{ program }}/p4src/{{ program }}.p4"'
-      when: not build_stat.stat.exists
+      # when: not build_stat.stat.exists
         
