@@ -15,13 +15,34 @@ ports : [
     speed: "100G"
   },
 ]
-forwarding_rules : [
+port_candi : [
   {
-    ip: "10.0.0.2",
-    out_port: "136"
+    flow: "1",
+    cur: "0",
+    p: "52",
   },
   {
-    ip: "10.0.0.187",
-    out_port: "20"
+    flow: "1",
+    cur: "1",
+    p: "20",
+  },
+  {
+    flow: "2",
+    cur: "0",
+    p: "136",
+  },
+]
+port_status : [
+  {
+    out_port: "52",
+    st: "1"
+  },
+  {
+    out_port: "20",
+    st: "1"
+  },
+  {
+    out_port: "136",
+    st: "1"
   },
 ]

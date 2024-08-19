@@ -10,3 +10,25 @@ ports : [
     speed: "100G"
   },
 ]
+port_candi : [
+  {
+    flow: "1",
+    cur: "0",
+    p: "168",
+  },
+  {
+    flow: "2",
+    cur: "0",
+    p: "128",
+  },
+]
+port_status : [
+  {
+    out_port: "168",
+    st: "1"
+  },
+  {
+    out_port: "128",
+    st: "1"
+  },
+]

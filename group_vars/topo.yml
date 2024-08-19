@@ -1,0 +1,12 @@
+addr_2_flow : [
+  {
+    src_addr: "10.0.0.2",
+    dst_addr: "10.0.0.187",
+    flow: "1"
+  },
+  {
+    src_addr: "10.0.0.187",
+    dst_addr: "10.0.0.2",
+    flow: "2"
+  },
+]

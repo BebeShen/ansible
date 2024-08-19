@@ -10,13 +10,25 @@ ports : [
     speed: "100G"
   },
 ]
-forwarding_rules : [
+port_candi : [
   {
-    ip: "10.0.0.2",
-    out_port: "133"
+    flow: "1",
+    cur: "0",
+    p: "144",
   },
   {
-    ip: "10.0.0.187",
-    out_port: "144"
+    flow: "2",
+    cur: "0",
+    p: "133",
+  },
+]
+port_status : [
+  {
+    out_port: "144",
+    st: "1"
+  },
+  {
+    out_port: "133",
+    st: "1"
   },
 ]

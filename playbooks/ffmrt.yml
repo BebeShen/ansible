@@ -1,0 +1,70 @@
+- name: Run experiment
+  hosts: topo
+  gather_facts: False 
+  tasks: 
+    # - name: Copy code
+    #   ansible.builtin.copy:
+    #     src: /home/bebe/Desktop/Projects/p4s/{{ program }}/
+    #     dest: ~/p4code/{{ program }}/
+
+    # - name: Build code by tools/p4_build.sh
+    #   ansible.builtin.shell: 'bash -c "sudo -E ~/tools/p4_build.sh ~/p4code/{{ program }}/p4src/{{ program }}.p4"'
+
+    - name: run switchd 
+      ansible.builtin.command: tmux send-keys -t p4 'sudo -E $SDE/run_switchd.sh -p {{ program }}' C-m
+
+    - name: Wait for a moment to ensure bf_shell UP
+      pause:
+        seconds: 15
+
+    - name: Enter ucli
+      ansible.builtin.command: tmux send-keys -t p4 'ucli' C-m
+
+    - name: Enter port manager
+      ansible.builtin.command: tmux send-keys -t p4 'pm' C-m
+        
+    - name: Add port
+      ansible.builtin.command: tmux send-keys -t p4 "port-add {{ item['port'] }} {{ item['speed'] }} NONE" C-m
+      with_items: " {{ ports }} "
+
+    - name: Auto-Negotiation force disable
+      ansible.builtin.command: tmux send-keys -t p4 "an-set {{ item['port'] }} 2" C-m
+      with_items: " {{ ports }} "            
+
+    - name: Enable port
+      ansible.builtin.command: tmux send-keys -t p4 "port-enb {{ item['port'] }}" C-m
+      with_items: " {{ ports }} "
+
+    - name: Exit ucli
+      ansible.builtin.command: tmux send-keys -t p4 "exit" C-m
+
+    - name: Enter bfrt_python
+      ansible.builtin.command: tmux send-keys -t p4 'bfrt_python' C-m
+
+    - name: Enter bfrt CLI
+      ansible.builtin.command: tmux send-keys -t p4 'bfrt' C-m
+
+    - name: register digest
+      ansible.builtin.command: tmux send-keys -t p4 "{{ program }}.pipe.IngressDeparser.idigest.callback_register" C-m
+
+    - name: Enter table
+      ansible.builtin.command: tmux send-keys -t p4 "{{ program }}.pipe.Ingress" C-m
+
+    - name: Insert table entries
+      ansible.builtin.command: tmux send-keys -t p4 "addr_2_flow.add_with_get_flow(src_addr=\"{{ item['src_addr'] }}\",dst_addr=\"{{ item['dst_addr'] }}\", f={{ item['flow'] }})" C-m
+      with_items: " {{ addr_2_flow }} "
+
+    - name: Insert table entries
+      ansible.builtin.command: tmux send-keys -t p4 "port_candi.add_with_get_port_candi(flow={{ item['flow'] }},cur={{ item['cur'] }}, p={{ item['p'] }})" C-m
+      with_items: " {{ port_candi }} "
+
+    - name: Insert table entries
+      ansible.builtin.command: tmux send-keys -t p4 "port_status.add_with_get_port_status(out_port={{ item['out_port'] }}, st={{ item['st'] }})" C-m
+      with_items: " {{ port_status }} "
+
+    - name: Wait 5min for testing
+      ansible.builtin.pause: 
+        seconds: 300
+
+    - name: Quit switchd
+      ansible.builtin.command: tmux send-keys -t p4 C-\\ C-m
