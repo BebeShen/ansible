@@ -1,0 +1,8 @@
+- name: Copy code to DUTs
+  hosts: topo
+  gather_facts: False 
+  tasks: 
+    - name: Copy code
+      ansible.builtin.copy:
+        src: /home/bebe/Desktop/Projects/p4s/{{ program }}/
+        dest: ~/p4code/{{ program }}/
