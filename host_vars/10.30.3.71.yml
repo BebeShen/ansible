@@ -1,5 +1,10 @@
 ports : [
   {
+    port: "15/-",
+    dp: "8",
+    speed: "100G"
+  },
+  {
     port: "21/-",
     dp: "36",
     speed: "100G"
@@ -14,15 +19,29 @@ port_candi : [
   {
     flow: "1",
     cur: "0",
-    p: "36",
+    p: "8",
   },
   {
     flow: "2",
     cur: "0",
     p: "52",
   },
+  {
+    flow: "3",
+    cur: "0",
+    p: "36",
+  },
+  {
+    flow: "4",
+    cur: "0",
+    p: "52",
+  },
 ]
 port_status : [
+  {
+    out_port: "8",
+    st: "1"
+  },
   {
     out_port: "36",
     st: "1"

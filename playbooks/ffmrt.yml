@@ -62,9 +62,9 @@
       ansible.builtin.command: tmux send-keys -t p4 "port_status.add_with_get_port_status(out_port={{ item['out_port'] }}, st={{ item['st'] }})" C-m
       with_items: " {{ port_status }} "
 
-    - name: Wait 5min for testing
+    - name: Wait 10min for testing
       ansible.builtin.pause: 
-        seconds: 300
+        seconds: 600
 
     - name: Quit switchd
       ansible.builtin.command: tmux send-keys -t p4 C-\\ C-m

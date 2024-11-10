@@ -9,4 +9,14 @@ addr_2_flow : [
     dst_addr: "10.0.0.2",
     flow: "2"
   },
+  {
+    src_addr: "10.0.0.2",
+    dst_addr: "10.0.0.188",
+    flow: "3"
+  },
+  {
+    src_addr: "10.0.0.188",
+    dst_addr: "10.0.0.2",
+    flow: "4"
+  },
 ]

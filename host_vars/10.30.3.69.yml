@@ -1,12 +1,17 @@
 ports : [
   {
-    port: "31/-",
-    dp: "128",
+    port: "1/-",
+    dp: "132",
+    speed: "10G"
+  },
+  {
+    port: "13/-",
+    dp: "24",
     speed: "100G"
   },
   {
-    port: "27/-",
-    dp: "168",
+    port: "15/-",
+    dp: "8",
     speed: "100G"
   },
 ]
@@ -14,21 +19,30 @@ port_candi : [
   {
     flow: "1",
     cur: "0",
-    p: "168",
+    p: "132",
   },
   {
     flow: "2",
     cur: "0",
-    p: "128",
+    p: "8",
+  },
+  {
+    flow: "2",
+    cur: "1",
+    p: "24",
   },
 ]
 port_status : [
   {
-    out_port: "168",
+    out_port: "132",
     st: "1"
   },
   {
-    out_port: "128",
+    out_port: "24",
+    st: "1"
+  },
+  {
+    out_port: "8",
     st: "1"
   },
 ]

@@ -3,7 +3,7 @@
 ports : [
   {
     port: "1/-",
-    dp: "129",
+    dp: "131",
     speed: "10G"
   },
   {
@@ -24,29 +24,24 @@ ports : [
 ]
 port_candi : [
   {
-    flow: "1",
+    flow: "3",
     cur: "0",
-    p: "129",
+    p: "131",
   },
   {
-    flow: "2",
+    flow: "4",
     cur: "0",
-    p: "172",
+    p: "0",
   },
   {
-    flow: "2",
+    flow: "4",
     cur: "1",
     p: "32",
-  },
-  {
-    flow: "2",
-    cur: "2",
-    p: "0",
   },
 ]
 port_status : [
   {
-    out_port: "129",
+    out_port: "131",
     st: "1"
   },
   {
