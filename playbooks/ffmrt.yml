@@ -62,6 +62,53 @@
       ansible.builtin.command: tmux send-keys -t p4 "port_status.add_with_get_port_status(out_port={{ item['out_port'] }}, st={{ item['st'] }})" C-m
       with_items: " {{ port_status }} "
 
+    - name: Wait 60sec for testing
+      ansible.builtin.pause: 
+        seconds: 60
+
+- name: Failure
+  hosts: server
+  gather_facts: False 
+  tasks: 
+    - name: ping 187
+      ansible.builtin.command: ping 10.0.0.187 -c 1
+      when: inventory_hostname == "192.168.30.23"
+
+    - name: iperf3 187
+      ansible.builtin.command: iperf3 -c 10.0.0.187 -p 5201 -b 10G -t 10 > iperf_output1.log 2>&1 &
+      when: inventory_hostname == "192.168.30.23"
+
+- name: Failure
+  hosts: failure2
+  gather_facts: False 
+  tasks: 
+    - name: Set variable for 70
+      set_fact:
+        dp: 52
+      when: inventory_hostname == "10.30.3.70"
+
+    - name: Set variable for 71
+      set_fact:
+        dp: 52
+      when: inventory_hostname == "10.30.3.71"
+
+    - name: Set variable for 73
+      set_fact:
+        dp: 0
+      when: inventory_hostname == "10.30.3.73"
+
+    - name: Set variable for 72
+      set_fact:
+        dp: 4
+      when: inventory_hostname == "10.30.3.72"
+
+    - name: Disable port
+      ansible.builtin.command: tmux send-keys -t p4 "port_status.mod_with_get_port_status(out_port={{ dp }}, st=0)" C-m
+
+- name: Exit experiment
+  hosts: topo
+  gather_facts: False 
+  tasks: 
     - name: Wait 10min for testing
       ansible.builtin.pause: 
         seconds: 600

@@ -1,0 +1,24 @@
+- name: Failure
+  hosts: server
+  gather_facts: False 
+  tasks: 
+
+    - name: Display the dynamically set value
+      debug:
+        msg: "Value for {{ inventory_hostname }}"
+
+
+    - name: Display the dynamically set value
+      ansible.builtin.command:  ls
+      register: ls_re
+
+    - name: display ls register
+      ansible.builtin.debug:
+        msg: "{{ ls_re }}"
+
+    # - name: Quit switchd
+    #   ansible.builtin.command: tmux send-keys -t p4 C-\\ C-m
+
+    # - name: Trigger Failure
+    #   ansible.builtin.command: tmux send-keys -t p4 "port_status.mod_with_get_port_status(out_port={{ item['out_port'] }}, st={{ item['st'] }})" C-m
+    #   with_items: " {{ port_status }} "
