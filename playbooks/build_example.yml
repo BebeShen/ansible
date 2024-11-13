@@ -1,5 +1,5 @@
 - name: Move code to DUT
-  hosts: uni_device
+  hosts: nchc
   tasks: 
     - name: Check if dir & code exist
       ansible.builtin.stat:

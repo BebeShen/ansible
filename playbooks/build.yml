@@ -1,5 +1,10 @@
 - name: Build code
-  hosts: topo_without_nchc
+  hosts: test
   tasks:
-    - name: Build code by tools/p4_build.sh
-      ansible.builtin.shell: 'bash -c "sudo -E ~/tools/p4_build.sh ~/p4code/{{ program }}/p4src/{{ program }}.p4"'
+    - name: Copy code
+      ansible.builtin.copy:
+        src: /home/bebe/Desktop/Projects/p4s/{{ program }}/
+        dest: ~/p4code/{{ program }}/
+    
+    # - name: Build code by tools/p4_build.sh
+    #   ansible.builtin.shell: 'bash -c "sudo -E ~/tools/p4_build.sh ~/p4code/{{ program }}/p4src/{{ program }}.p4"'

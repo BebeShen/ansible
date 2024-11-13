@@ -24,26 +24,22 @@ ports : [
 ]
 port_candi : [
   {
-    flow: "3",
-    cur: "0",
-    p: "131",
-  },
-  {
-    flow: "4",
+    flow: "1",
     cur: "0",
     p: "0",
   },
   {
-    flow: "4",
+    flow: "1",
     cur: "1",
     p: "32",
   },
+  {
+    flow: "2",
+    cur: "0",
+    p: "172",
+  },
 ]
 port_status : [
-  {
-    out_port: "131",
-    st: "1"
-  },
   {
     out_port: "172",
     st: "1"

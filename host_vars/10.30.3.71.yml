@@ -27,14 +27,9 @@ port_candi : [
     p: "52",
   },
   {
-    flow: "3",
-    cur: "0",
+    flow: "2",
+    cur: "1",
     p: "36",
-  },
-  {
-    flow: "4",
-    cur: "0",
-    p: "52",
   },
 ]
 port_status : [

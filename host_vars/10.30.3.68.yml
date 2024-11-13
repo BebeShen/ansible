@@ -5,6 +5,11 @@ ports : [
     speed: "100G"
   },
   {
+    port: "27/-",
+    dp: "168",
+    speed: "100G"
+  },
+  {
     port: "32/-",
     dp: "136",
     speed: "100G"
@@ -17,17 +22,12 @@ port_candi : [
     p: "136",
   },
   {
+    flow: "1",
+    cur: "1",
+    p: "168",
+  },
+  {
     flow: "2",
-    cur: "0",
-    p: "132",
-  },
-  {
-    flow: "3",
-    cur: "0",
-    p: "136",
-  },
-  {
-    flow: "4",
     cur: "0",
     p: "132",
   },
@@ -35,6 +35,10 @@ port_candi : [
 port_status : [
   {
     out_port: "136",
+    st: "1"
+  },
+  {
+    out_port: "168",
     st: "1"
   },
   {
